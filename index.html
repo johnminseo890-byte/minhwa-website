@@ -1496,11 +1496,21 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     d.addEventListener('click',()=>switchPanel(parseInt(d.dataset.panel)));
   });
   
-  // Image card click → next panel (cycle)
+  // Image card click → cycle through all states
+  // Panel 0 Sub 0 (Brand) → Panel 0 Sub 1 (Founder) → Panel 1 (Why Minhwa) → back
   if(imgCard){
     imgCard.style.cursor='pointer';
     imgCard.addEventListener('click',()=>{
-      switchPanel(currentPanel < totalPanels - 1 ? currentPanel + 1 : 0);
+      if(currentPanel === 0 && subIdx === 0){
+        // Brand Story → Founder Story
+        goSub(1);
+      } else if(currentPanel === 0 && subIdx === 1){
+        // Founder Story → Why Minhwa
+        switchPanel(1);
+      } else {
+        // Why Minhwa → back to Brand Story
+        switchPanel(0);
+      }
     });
   }
   
