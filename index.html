@@ -594,6 +594,18 @@ body{
   font-size:11px;text-align:center;color:rgba(242,237,228,0.35);
   letter-spacing:0.06em;
 }
+.footer-social{
+  display:flex;gap:16px;justify-content:center;
+  margin-bottom:20px;
+}
+.footer-social a{
+  color:rgba(242,237,228,0.4);
+  transition:color 0.3s, transform 0.3s;
+  display:flex;align-items:center;justify-content:center;
+}
+.footer-social a:hover{
+  color:var(--marula-gold);transform:translateY(-2px);
+}
 
 
 /* ======================== TESTIMONIAL / OUR VICTORY ======================== */
@@ -1236,10 +1248,13 @@ body{
     Your voice shapes our journey. Follow us for skincare rituals, behind-the-scenes, and the stories that inspire our formulas.
   </p>
   <div class="social-links fade-in">
-    <a href="#" aria-label="Instagram" title="Instagram">
+    <a href="https://www.instagram.com/minhwabeauty/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
     </a>
-    <a href="#" aria-label="TikTok" title="TikTok">
+    <a href="#" aria-label="Facebook" title="Facebook — Coming Soon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+    </a>
+    <a href="#" aria-label="TikTok" title="TikTok — Coming Soon">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .56.04.82.11v-3.5a6.37 6.37 0 00-.82-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V9.14a8.16 8.16 0 004.76 1.52v-3.4a4.85 4.85 0 01-1-.57z"/></svg>
     </a>
   </div>
@@ -1256,6 +1271,17 @@ body{
       <li><a href="#about">Our Story</a></li>
       <li><a href="#products">Collection</a></li>
     </ul>
+  </div>
+  <div class="footer-social">
+    <a href="https://www.instagram.com/minhwabeauty/" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+    </a>
+    <a href="#" aria-label="Facebook">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+    </a>
+    <a href="#" aria-label="TikTok">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .56.04.82.11v-3.5a6.37 6.37 0 00-.82-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V9.14a8.16 8.16 0 004.76 1.52v-3.4a4.85 4.85 0 01-1-.57z"/></svg>
+    </a>
   </div>
   <p class="footer-copy">© 2026 Minhwa Beauty. All rights reserved.</p>
 </footer>
