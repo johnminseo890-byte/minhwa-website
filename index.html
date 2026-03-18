@@ -856,7 +856,7 @@ body{
 <!-- ==================== NAV ==================== -->
 <nav class="nav">
   <a href="#" class="nav-logo" aria-label="Minhwa Beauty Home">
-    <img src="images/logo.svg" alt="Minhwa Beauty" style="height:48px;width:auto">
+    <img src="images/logo.webp" alt="Minhwa Beauty" style="height:48px;width:auto">
   </a>
   <ul class="nav-links">
     <li><a href="#hero">Home</a></li>
@@ -997,7 +997,7 @@ body{
       <div class="story-img-inner">
         <img src="images/story-golden-hour.webp" alt="African woman silhouette under golden hour" class="active" data-panel="0" data-sub="0" loading="lazy" width="928" height="1152">
         <img src="images/founder-min.webp" alt="Min, Founder of Minhwa" data-panel="0" data-sub="1" loading="lazy">
-        <div data-panel="1" style="position:absolute;inset:0;background:linear-gradient(135deg, var(--baobab) 0%, var(--marula-gold) 100%);width:100%;height:100%;opacity:0;transition:opacity 0.5s cubic-bezier(.33,0,.2,1)" class="story-overlay"></div>
+        <img src="images/story-why-minhwa.webp" alt="Minhwa logo calligraphy" data-panel="1" loading="lazy">
       </div>
     </div>
     <div class="story-dots">
@@ -1249,7 +1249,7 @@ body{
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-logo">
-      <img src="images/logo.svg" alt="Minhwa Beauty" style="height:36px;width:auto" loading="lazy">
+      <img src="images/logo.webp" alt="Minhwa Beauty" style="height:36px;width:auto" loading="lazy">
     </div>
     <ul class="footer-links">
       <li><a href="#hero">Home</a></li>
@@ -1455,7 +1455,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   const dots = document.querySelectorAll('.story-dot');
   const panels = document.querySelectorAll('.story-panel');
   const imgs = document.querySelectorAll('.story-img-card img');
-  const overlay = document.querySelector('.story-overlay');
   const imgCard = document.getElementById('storyImgCard');
   const labelEl = document.getElementById('storyLabel');
   if(!dots.length) return;
@@ -1468,19 +1467,19 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     dots.forEach(d=>d.classList.remove('active'));
     panels.forEach(p=>{p.classList.remove('active');p.style.animation='none'});
     imgs.forEach(i=>i.classList.remove('active'));
-    if(overlay) overlay.style.opacity='0';
     
     dots[idx].classList.add('active');
     panels[idx].classList.add('active');
     panels[idx].style.animation='storyFadeUp .5s cubic-bezier(.33,0,.2,1) forwards';
     if(labelEl) labelEl.textContent = labels[idx];
     
-    // For panel 0, show image matching current sub-panel; for panel 1, show overlay
+    // For panel 0, show image matching current sub-panel; for panel 1, show by data-panel
     if(idx === 0){
       const subImg = document.querySelector('.story-img-card img[data-sub="'+subIdx+'"]');
       if(subImg) subImg.classList.add('active');
     } else {
-      if(overlay) overlay.style.opacity='1';
+      const panelImg = document.querySelector('.story-img-card img[data-panel="'+idx+'"]');
+      if(panelImg) panelImg.classList.add('active');
     }
     
     // Reset sub-panel to 0 when switching main panels
@@ -1534,7 +1533,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     }
     // Switch image based on sub-panel
     imgs.forEach(i => i.classList.remove('active'));
-    if(overlay) overlay.style.opacity='0';
     const subImg = document.querySelector('.story-img-card img[data-sub="'+subIdx+'"]');
     if(subImg) subImg.classList.add('active');
   }
