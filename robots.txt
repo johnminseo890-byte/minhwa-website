@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://minhwa-beauty.com/sitemap.xml
