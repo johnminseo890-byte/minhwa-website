@@ -678,7 +678,7 @@ body{
   border:1px solid rgba(196,162,78,0.08);
   cursor:pointer;
 }
-.victory-vid{
+.victory-poster{
   position:absolute;inset:0;
   width:100%;height:100%;
   object-fit:cover;
@@ -694,6 +694,52 @@ body{
 .victory-play.hidden{display:none}
 .victory-card:hover .victory-play{
   background:var(--marula-gold);transform:scale(1.1);
+}
+
+/* Victory Lightbox */
+.victory-lightbox{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,0.92);
+  display:none;align-items:center;justify-content:center;
+  flex-direction:column;
+  opacity:0;transition:opacity 0.3s;
+}
+.victory-lightbox.open{display:flex;opacity:1}
+.victory-lightbox-close{
+  position:absolute;top:20px;right:24px;
+  width:40px;height:40px;border:none;background:none;
+  color:#fff;font-size:28px;cursor:pointer;z-index:2;
+  opacity:0.6;transition:opacity 0.3s;
+}
+.victory-lightbox-close:hover{opacity:1}
+.victory-lightbox-content{
+  position:relative;
+  max-width:420px;width:90%;
+  aspect-ratio:9/16;
+  border-radius:16px;overflow:hidden;
+}
+.victory-lightbox-content img,
+.victory-lightbox-content video{
+  width:100%;height:100%;object-fit:cover;
+  position:absolute;inset:0;
+}
+.victory-lightbox-content video{z-index:1}
+.victory-lightbox-play{
+  position:absolute;z-index:3;
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(196,162,78,0.5);
+  border:2px solid rgba(242,237,228,0.4);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.3s;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.victory-lightbox-play:hover{
+  background:var(--marula-gold);transform:translate(-50%,-50%) scale(1.1);
+}
+.victory-lightbox-play.hidden{display:none}
+.victory-lightbox-label{
+  margin-top:16px;text-align:center;color:rgba(255,255,255,0.7);
+  font-size:13px;letter-spacing:0.08em;
 }
 .victory-name{
   font-family:var(--font-display);font-size:16px;
@@ -1140,11 +1186,9 @@ body{
     <div class="victory-track" id="victoryTrack">
       <div class="victory-slide">
         <div class="victory-card">
-          <div class="victory-video" id="victoryVideoAnesu">
-            <video class="victory-vid" poster="images/victory-anesu-poster.webp" playsinline preload="none">
-              <source src="images/victory-anesu.mp4" type="video/mp4">
-            </video>
-            <div class="victory-play" id="victoryPlayAnesu"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--hanji-cream)"><polygon points="6,3 20,12 6,21"/></svg></div>
+          <div class="victory-video" data-poster="images/victory-anesu-poster.webp" data-video="images/victory-anesu.mp4" data-name="Anesu — Harare, Zimbabwe">
+            <img class="victory-poster" src="images/victory-anesu-poster.webp" alt="Anesu before and after using Minhwa tinted sunscreen" loading="lazy">
+            <div class="victory-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--hanji-cream)"><polygon points="6,3 20,12 6,21"/></svg></div>
           </div>
           <h4 class="victory-name">Anesu</h4>
           <p class="victory-role">Harare, Zimbabwe</p>
@@ -1304,6 +1348,17 @@ body{
   </div>
 </section>
 
+<!-- Victory Lightbox -->
+<div class="victory-lightbox" id="victoryLightbox">
+  <button class="victory-lightbox-close" id="victoryLbClose">&times;</button>
+  <div class="victory-lightbox-content" id="victoryLbContent">
+    <img id="victoryLbImg" src="" alt="">
+    <video id="victoryLbVid" playsinline preload="none" style="display:none"><source id="victoryLbSrc" src="" type="video/mp4"></video>
+    <div class="victory-lightbox-play" id="victoryLbPlay"><svg width="28" height="28" viewBox="0 0 24 24" fill="var(--hanji-cream)"><polygon points="6,3 20,12 6,21"/></svg></div>
+  </div>
+  <p class="victory-lightbox-label" id="victoryLbLabel"></p>
+</div>
+
 <!-- ==================== FOOTER ==================== -->
 <footer class="footer">
   <div class="footer-inner">
@@ -1445,9 +1500,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     idx=i;
     track.style.transform='translateX(-'+idx*100+'%)';
     dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
-    // Pause any playing videos when swiping away
-    track.querySelectorAll('video').forEach(v=>{v.pause();});
-    track.querySelectorAll('.victory-play').forEach(p=>p.classList.remove('hidden'));
   }
   dots.forEach(d=>d.addEventListener('click',()=>goTo(+d.dataset.idx)));
   let sx=0;
@@ -1458,23 +1510,71 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     if(dx>40&&idx>0)goTo(idx-1);
   });
 
-  // Video click-to-play
-  document.querySelectorAll('.victory-video').forEach(container=>{
-    const video = container.querySelector('video');
-    const playBtn = container.querySelector('.victory-play');
-    if(!video || !playBtn) return;
-    container.addEventListener('click',()=>{
-      if(video.paused){
-        video.play();
-        playBtn.classList.add('hidden');
+  // Lightbox elements
+  const lb=document.getElementById('victoryLightbox');
+  const lbImg=document.getElementById('victoryLbImg');
+  const lbVid=document.getElementById('victoryLbVid');
+  const lbSrc=document.getElementById('victoryLbSrc');
+  const lbPlay=document.getElementById('victoryLbPlay');
+  const lbClose=document.getElementById('victoryLbClose');
+  const lbLabel=document.getElementById('victoryLbLabel');
+  if(!lb)return;
+
+  // Click card → open lightbox with poster image
+  document.querySelectorAll('.victory-video[data-poster]').forEach(card=>{
+    card.addEventListener('click',()=>{
+      const poster=card.dataset.poster;
+      const video=card.dataset.video;
+      const name=card.dataset.name||'';
+      lbImg.src=poster;
+      lbImg.style.display='block';
+      lbVid.style.display='none';
+      lbVid.pause();
+      if(video){
+        lbSrc.src=video;
+        lbVid.load();
+        lbPlay.classList.remove('hidden');
       } else {
-        video.pause();
-        playBtn.classList.remove('hidden');
+        lbPlay.classList.add('hidden');
       }
+      lbLabel.textContent=name;
+      lb.classList.add('open');
+      document.body.style.overflow='hidden';
     });
-    video.addEventListener('ended',()=>{
-      playBtn.classList.remove('hidden');
-    });
+  });
+
+  // Play button → switch to video
+  lbPlay.addEventListener('click',function(e){
+    e.stopPropagation();
+    lbImg.style.display='none';
+    lbVid.style.display='block';
+    lbVid.play();
+    lbPlay.classList.add('hidden');
+  });
+
+  // Video ended → show poster again
+  lbVid.addEventListener('ended',()=>{
+    lbVid.style.display='none';
+    lbImg.style.display='block';
+    lbPlay.classList.remove('hidden');
+  });
+
+  // Click video → pause/resume
+  lbVid.addEventListener('click',function(e){
+    e.stopPropagation();
+    if(lbVid.paused){lbVid.play();lbPlay.classList.add('hidden');}
+    else{lbVid.pause();lbPlay.classList.remove('hidden');}
+  });
+
+  // Close lightbox
+  function closeLb(){
+    lb.classList.remove('open');
+    lbVid.pause();
+    document.body.style.overflow='';
+  }
+  lbClose.addEventListener('click',closeLb);
+  lb.addEventListener('click',function(e){
+    if(e.target===lb) closeLb();
   });
 })();
 
