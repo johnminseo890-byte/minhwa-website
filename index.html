@@ -676,13 +676,22 @@ body{
   margin-bottom:16px;
   position:relative;overflow:hidden;
   border:1px solid rgba(196,162,78,0.08);
+  cursor:pointer;
+}
+.victory-vid{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  border-radius:12px;
 }
 .victory-play{
   width:56px;height:56px;border-radius:50%;
   background:rgba(196,162,78,0.3);
   display:flex;align-items:center;justify-content:center;
   transition:all 0.3s;
+  position:relative;z-index:2;
 }
+.victory-play.hidden{display:none}
 .victory-card:hover .victory-play{
   background:var(--marula-gold);transform:scale(1.1);
 }
@@ -1131,6 +1140,18 @@ body{
     <div class="victory-track" id="victoryTrack">
       <div class="victory-slide">
         <div class="victory-card">
+          <div class="victory-video" id="victoryVideoAnesu">
+            <video class="victory-vid" poster="images/victory-anesu-poster.webp" playsinline preload="none">
+              <source src="images/victory-anesu.mp4" type="video/mp4">
+            </video>
+            <div class="victory-play" id="victoryPlayAnesu"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--hanji-cream)"><polygon points="6,3 20,12 6,21"/></svg></div>
+          </div>
+          <h4 class="victory-name">Anesu</h4>
+          <p class="victory-role">Harare, Zimbabwe</p>
+        </div>
+      </div>
+      <div class="victory-slide">
+        <div class="victory-card">
           <div class="victory-video"><div class="victory-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--hanji-cream)"><polygon points="6,3 20,12 6,21"/></svg></div></div>
           <h4 class="victory-name">Thandiwe M.</h4>
           <p class="victory-role">Cape Town, SA</p>
@@ -1155,9 +1176,10 @@ body{
       <button class="carousel-dot active" data-idx="0"></button>
       <button class="carousel-dot" data-idx="1"></button>
       <button class="carousel-dot" data-idx="2"></button>
+      <button class="carousel-dot" data-idx="3"></button>
     </div>
   </div>
-  <p class="victory-coming fade-in">Video testimonials coming soon</p>
+  <p class="victory-coming fade-in">More testimonials coming soon</p>
 </section>
 
 <!-- ==================== WHY MINHWA ==================== -->
@@ -1418,11 +1440,14 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   const track=document.getElementById('victoryTrack');
   const dots=document.querySelectorAll('#victoryDots .carousel-dot');
   if(!track)return;
-  let idx=0;const total=3;
+  let idx=0;const total=4;
   function goTo(i){
     idx=i;
     track.style.transform='translateX(-'+idx*100+'%)';
     dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
+    // Pause any playing videos when swiping away
+    track.querySelectorAll('video').forEach(v=>{v.pause();});
+    track.querySelectorAll('.victory-play').forEach(p=>p.classList.remove('hidden'));
   }
   dots.forEach(d=>d.addEventListener('click',()=>goTo(+d.dataset.idx)));
   let sx=0;
@@ -1431,6 +1456,25 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     const dx=e.changedTouches[0].clientX-sx;
     if(dx<-40&&idx<total-1)goTo(idx+1);
     if(dx>40&&idx>0)goTo(idx-1);
+  });
+
+  // Video click-to-play
+  document.querySelectorAll('.victory-video').forEach(container=>{
+    const video = container.querySelector('video');
+    const playBtn = container.querySelector('.victory-play');
+    if(!video || !playBtn) return;
+    container.addEventListener('click',()=>{
+      if(video.paused){
+        video.play();
+        playBtn.classList.add('hidden');
+      } else {
+        video.pause();
+        playBtn.classList.remove('hidden');
+      }
+    });
+    video.addEventListener('ended',()=>{
+      playBtn.classList.remove('hidden');
+    });
   });
 })();
 
