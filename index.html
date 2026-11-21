@@ -185,7 +185,19 @@ body{
   width:100%;aspect-ratio:1;container-type:inline-size;overflow:hidden;border-radius:8px;
 }
 .hero-img-track{
-  display:flex;transition:transform 0.5s cubic-bezier(.25,.8,.25,1);
+  display:flex;height:100%;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;
+}
+.hero-img-track::-webkit-scrollbar{display:none}
+.hero-img-track > *{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always}
+.hero-img-track img{cursor:pointer}
+#heroDots{gap:0;margin-top:4px}
+#heroDots button{width:44px;height:44px;background:transparent;transform:none;display:grid;place-items:center}
+#heroDots button::before{
+  content:"";width:10px;height:10px;border-radius:50%;background:rgba(196,162,78,.35);
+  transition:transform .2s,background .2s;
+}
+#heroDots button.active::before{background:var(--marula-gold);transform:scale(1.2)
 }
 .hero-product-img{
   min-width:100%;width:100%;height:auto;display:block;
@@ -1314,34 +1326,34 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
 /* ---- Hero Image Carousel ---- */
 (function(){
-  const track=document.getElementById('heroImgTrack');
-  const dots=document.querySelectorAll('#heroDots .carousel-dot');
-  const details=track.querySelector('.product-details');
-  const total=dots.length;
-  let idx=0;
-  function goTo(i){
-    idx=i;
-    const readingDetails=idx===total-1;
-    stage.classList.toggle('reading-details',readingDetails);
-    details.tabIndex=readingDetails?0:-1;
-    track.style.transform='translateX(-'+idx*100+'%)';
-    dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
+  const track = document.getElementById('heroImgTrack');
+  const dots = Array.from(document.querySelectorAll('#heroDots button'));
+  const details = track.querySelector('.product-details');
+  function currentSlide(){
+    return Math.round(track.scrollLeft / track.clientWidth);
   }
-  dots.forEach(d=>d.addEventListener('click',()=>goTo(+d.dataset.idx)));
-  // Click image to advance
-  track.style.cursor='pointer';
-  track.addEventListener('click',()=>goTo(idx<total-1?idx+1:0));
-  // Swipe
-  let sx=0,sy=0;
-  track.addEventListener('touchstart',e=>{
-    sx=e.touches[0].clientX;sy=e.touches[0].clientY;
-  },{passive:true});
-  track.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-sx;
-    if(Math.abs(dx)<=Math.abs(e.changedTouches[0].clientY-sy))return;
-    if(dx<-40&&idx<total-1)goTo(idx+1);
-    if(dx>40&&idx>0)goTo(idx-1);
+  function sync(){
+    const index = currentSlide();
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+      dot.setAttribute('aria-current', String(i === index));
+    });
+    const reading = index === dots.length - 1;
+    track.closest('.product-stage').classList.toggle('reading-details', reading);
+    details.tabIndex = reading ? 0 : -1;
+  }
+  function goTo(i){
+    track.scrollTo({
+      left: i * track.clientWidth,
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
+    });
+  }
+  dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+  track.addEventListener('scroll', sync, {passive:true});
+  track.addEventListener('click', e => {
+    if (!e.target.closest('.product-details')) goTo((currentSlide() + 1) % dots.length);
   });
+  sync();
 })();
 
 /* ---- Victory Carousel ---- */
