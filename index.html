@@ -385,7 +385,7 @@ body{
 }
 .story-left{position:sticky;top:120px}
 .story-img-card{
-  width:100%;aspect-ratio:4/5;
+  width:100%;aspect-ratio:3/4;
   border-radius:21px;padding:3px;
   background:conic-gradient(
     from var(--shimmer-angle,0deg),
@@ -996,8 +996,7 @@ body{
   <div class="story-left fade-in">
     <div class="story-img-card" id="storyImgCard">
       <div class="story-img-inner">
-        <img src="images/story-golden-hour.webp" alt="African woman silhouette under golden hour" class="active" data-panel="0" data-sub="0" loading="lazy" width="928" height="1152">
-        <img src="images/founder-min.webp" alt="Min, Founder of Minhwa" data-panel="0" data-sub="1" loading="lazy">
+        <img src="images/harare-hanbok.webp" alt="Now we are in Harare. A woman in a pink hanbok beside Minhwa sunscreen." class="active" data-panel="0" loading="lazy" width="1086" height="1448">
         <img src="images/story-why-minhwa.webp" alt="Minhwa logo calligraphy" data-panel="1" loading="lazy">
       </div>
     </div>
@@ -1464,15 +1463,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     panels[idx].style.animation='storyFadeUp .5s cubic-bezier(.33,0,.2,1) forwards';
     if(labelEl) labelEl.textContent = labels[idx];
     
-    // For panel 0, show image matching current sub-panel; for panel 1, show by data-panel
-    if(idx === 0){
-      const subImg = document.querySelector('.story-img-card img[data-sub="'+subIdx+'"]');
-      if(subImg) subImg.classList.add('active');
-    } else {
-      const panelImg = document.querySelector('.story-img-card img[data-panel="'+idx+'"]');
-      if(panelImg) panelImg.classList.add('active');
-    }
-    
+    imgs.forEach(image => image.classList.toggle('active', Number(image.dataset.panel) === idx));
+
     // Reset sub-panel to 0 when switching main panels
     if(idx === 0 && typeof goSub === 'function') goSub(0);
     
@@ -1522,10 +1514,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
         ? 'Swipe or tap to read the founder\u2019s story \u2192' 
         : '\u2190 Back to brand story';
     }
-    // Switch image based on sub-panel
-    imgs.forEach(i => i.classList.remove('active'));
-    const subImg = document.querySelector('.story-img-card img[data-sub="'+subIdx+'"]');
-    if(subImg) subImg.classList.add('active');
   }
   
   subDots.forEach(d => {
