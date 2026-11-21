@@ -192,6 +192,24 @@ body{
   filter:drop-shadow(0 30px 60px rgba(46,30,18,0.15));
   transition:filter 0.5s;
 }
+.product-details{
+  flex:0 0 100%;min-width:0;max-height:0;overflow:hidden;
+  background:var(--hanji-cream);color:var(--mpingo);
+}
+.product-details-body{
+  padding:clamp(20px,4vw,36px);text-align:left;
+  font:400 0.9375rem/1.65 var(--font-body);overflow-wrap:anywhere;
+}
+.product-details h3{
+  margin:1em 0 .25em;
+  font:600 1.375rem/1.25 var(--font-display);
+}
+.product-details h3:first-child{margin-top:0}
+.product-details ol{padding-inline-start:1.6em}
+.product-stage.reading-details .product-details{max-height:none}
+.product-stage.reading-details .hero-img-carousel{animation:none}
+.product-stage.reading-details .product-tooltip{visibility:hidden}
+.hero-img-track{align-items:flex-start}
 .hero-dots{margin-top:16px}
 .product-stage:hover .hero-product-img{
   filter:drop-shadow(0 40px 80px rgba(46,30,18,0.22));
@@ -844,18 +862,31 @@ body{
         <div class="hero-img-track" id="heroImgTrack">
           <img src="images/hero-product-front.webp" alt="Minhwa Beauty Tinted Sunscreen - Front" class="hero-product-img" width="2000" height="2000">
           <img src="images/hero-product-back.webp" alt="Minhwa Beauty Tinted Sunscreen - Back" class="hero-product-img" width="2000" height="2000">
-          <div class="hero-product-img" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--hanji-cream) 0%,#f5ede4 100%);padding:24px;box-sizing:border-box">
-            <div style="text-align:left;width:100%">
-              <p style="font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--marula-gold);margin:0 0 10px">Full Ingredients</p>
-              <p style="font-family:'Inter',sans-serif;font-size:0.7rem;line-height:1.9;color:rgba(28,26,23,.75);font-weight:400;margin:0;word-break:break-word">Water, Cyclopentasiloxane, Cetyl Ethylhexanoate, Caprylic/Capric Triglyceride, Butylene Glycol, Diethylhexyl Carbonate, Glycerin, Sorbitan Olivate, Sodium Hyaluronate, Disteardimonium Hectorite, Cetyl PEG/PPG-10/1 Dimethicone, Sodium Chloride, Tocopheryl Acetate, Panthenol, Allantoin, CI 77891, CI 77947, CI 77491, CI 77492, CI 77499</p>
+          <div class="product-details">
+            <div class="product-details-body">
+              <h3>Full Ingredients</h3>
+              <p>Water, Cyclopentasiloxane, Cetyl ethylhexanoate, Caprylic/capric triglycerides, Zinc Oxide (CI 77947), Dicaprylyl carbonate, Butylene Glycol, Glycerin, Sorbitan Olivate, Cetyl PEG/PPG-10/1 Dimethicone, Disteardimonium Hectorite, Iron Oxide Yellow (CI 77492), Iron Oxide Red (CI 77491), Iron Oxide Black (CI 77499), Sodium chloride, Allantoin, Panthenol, Tocopheryl acetate, Sodium Hyaluronate, 1,2-Hexanediol, Caprylyl Glycol, Ethylhexylglycerin, Adansonia Digitata Seed Oil (Baobab Oil)</p>
+              <h3>Usage</h3>
+              <p>As the last step of basic skincare, apply evenly to face, arms, legs, neck and other areas prone to UV exposure.</p>
+              <h3>Cautions</h3>
+              <ol>
+                <li>If redness, swelling or itching occurs during or after use due to sunlight exposure, consult a specialist.</li>
+                <li>Avoid use on wounded skin.</li>
+                <li>Storage &amp; handling
+                  <ol type="a">
+                    <li>Keep out of reach of children.</li>
+                    <li>Store away from direct sunlight.</li>
+                  </ol>
+                </li>
+              </ol>
             </div>
           </div>
         </div>
       </div>
       <div class="carousel-dots hero-dots" id="heroDots">
-        <button class="carousel-dot active" data-idx="0"></button>
-        <button class="carousel-dot" data-idx="1"></button>
-        <button class="carousel-dot" data-idx="2"></button>
+        <button class="carousel-dot active" data-idx="0" aria-label="Product front"></button>
+        <button class="carousel-dot" data-idx="1" aria-label="Product back"></button>
+        <button class="carousel-dot" data-idx="2" aria-label="Ingredients, usage and cautions"></button>
       </div>
       <div class="product-tooltip">
         <h4>Korean Sunscreen for African Skin Tones</h4>
@@ -1253,6 +1284,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   let idx=0;
   function goTo(i){
     idx=i;
+    stage.classList.toggle('reading-details', idx === total - 1);
     track.style.transform='translateX(-'+idx*100+'%)';
     dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
   }
