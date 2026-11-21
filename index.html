@@ -846,6 +846,24 @@ body{
   .journey{padding:48px var(--px)}
   .story-img-card{aspect-ratio:3/4}
 }
+.story-img-inner,.story-sub-track{
+  display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+  overscroll-behavior-x:contain;scrollbar-width:none;
+}
+.story-img-inner::-webkit-scrollbar,.story-sub-track::-webkit-scrollbar{display:none}
+.story-img-inner img,.story-sub-track > .story-sub{
+  flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always
+}
+.story-img-inner img{position:static;opacity:1;cursor:pointer}
+.story-dots,.story-sub-dots{gap:0}
+.story-dots button,.story-sub-dots button{
+  width:44px;height:44px;display:grid;place-items:center;background:transparent
+}
+.story-dots button::before,.story-sub-dots button::before{
+  content:"";width:10px;height:10px;border-radius:10px;background:var(--dak);
+  transition:width .25s,background .25s
+}
+.story-dots button.active::before,.story-sub-dots button.active::before{width:24px;background:var(--marula-gold)}
 </style>
 </head>
 <body>
@@ -1441,94 +1459,43 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
 /* ---- Story Panel Switching ---- */
 (function(){
-  const labels = ['OUR STORY','WHY MINHWA'];
-  const dots = document.querySelectorAll('.story-dot');
+  const images = document.querySelector('.story-img-inner');
+  const stories = document.getElementById('storySubTrack');
   const panels = document.querySelectorAll('.story-panel');
-  const imgs = document.querySelectorAll('.story-img-card img');
-  const imgCard = document.getElementById('storyImgCard');
-  const labelEl = document.getElementById('storyLabel');
-  if(!dots.length) return;
-  
-  let currentPanel = 0;
-  const totalPanels = dots.length;
-  
-  function switchPanel(idx){
-    currentPanel = idx;
-    dots.forEach(d=>d.classList.remove('active'));
-    panels.forEach(p=>{p.classList.remove('active');p.style.animation='none'});
-    imgs.forEach(i=>i.classList.remove('active'));
-    
-    dots[idx].classList.add('active');
-    panels[idx].classList.add('active');
-    panels[idx].style.animation='storyFadeUp .5s cubic-bezier(.33,0,.2,1) forwards';
-    if(labelEl) labelEl.textContent = labels[idx];
-    
-    imgs.forEach(image => image.classList.toggle('active', Number(image.dataset.panel) === idx));
+  const label = document.getElementById('storyLabel');
+  const hint = document.getElementById('storySubHint');
+  const imageDots = document.querySelectorAll('.story-dot');
+  const textDots = document.querySelectorAll('.story-sub-dot');
 
-    // Reset sub-panel to 0 when switching main panels
-    if(idx === 0 && typeof goSub === 'function') goSub(0);
-    
-    if(window.innerWidth < 1024){
-      panels[idx].scrollIntoView({behavior:'smooth',block:'nearest'});
-    }
+  function indexOfSlide(track){
+    return track.clientWidth ? Math.round(track.scrollLeft / track.clientWidth) : 0;
   }
-  
-  // Dots click
-  dots.forEach(d=>{
-    d.addEventListener('click',()=>switchPanel(parseInt(d.dataset.panel)));
-  });
-  
-  // Image card click → cycle through all states
-  // Panel 0 Sub 0 (Brand) → Panel 0 Sub 1 (Founder) → Panel 1 (Why Minhwa) → back
-  if(imgCard){
-    imgCard.style.cursor='pointer';
-    imgCard.addEventListener('click',()=>{
-      if(currentPanel === 0 && subIdx === 0){
-        // Brand Story → Founder Story
-        goSub(1);
-      } else if(currentPanel === 0 && subIdx === 1){
-        // Founder Story → Why Minhwa
-        switchPanel(1);
-      } else {
-        // Why Minhwa → back to Brand Story
-        switchPanel(0);
-      }
+  function move(track, index){
+    track.scrollTo({left:index * track.clientWidth,
+      behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
+  }
+  function select(dots, index){
+    dots.forEach((dot,i)=>{
+      dot.classList.toggle('active', i === index);
+      dot.setAttribute('aria-current', String(i === index));
     });
   }
-  
-  /* Sub-panel swipe within Our Story */
-  const subTrack = document.getElementById('storySubTrack');
-  const subDots = document.querySelectorAll('.story-sub-dot');
-  const subHint = document.getElementById('storySubHint');
-  if(!subTrack) return;
-  
-  let subIdx = 0;
-  const subLabels = ['OUR STORY','ABOUT FOUNDER'];
-  function goSub(idx){
-    subIdx = Math.max(0, Math.min(1, idx));
-    subTrack.style.transform = 'translateX(' + (-subIdx * 100) + '%)';
-    subDots.forEach((d,i) => d.classList.toggle('active', i === subIdx));
-    if(labelEl) labelEl.textContent = subLabels[subIdx];
-    if(subHint){
-      subHint.textContent = subIdx === 0 
-        ? 'Swipe or tap to read the founder\u2019s story \u2192' 
-        : '\u2190 Back to brand story';
-    }
+  function sync(){
+    const panel = indexOfSlide(images);
+    panels.forEach((item,i)=>item.classList.toggle('active', i === panel));
+    const sub = indexOfSlide(stories);
+    select(imageDots, panel);
+    select(textDots, sub);
+    label.textContent = panel ? 'WHY MINHWA' : sub ? 'ABOUT FOUNDER' : 'OUR STORY';
+    hint.textContent = sub ? '← Back to brand story' : 'Swipe or tap to read the founder’s story →';
   }
-  
-  subDots.forEach(d => {
-    d.addEventListener('click', () => goSub(parseInt(d.dataset.sub)));
-  });
-  
-  // Touch swipe on sub-track
-  let subStartX = 0;
-  subTrack.addEventListener('touchstart', e => { subStartX = e.touches[0].clientX; }, {passive:true});
-  subTrack.addEventListener('touchend', e => {
-    const diff = subStartX - e.changedTouches[0].clientX;
-    if(Math.abs(diff) > 50){
-      goSub(diff > 0 ? subIdx + 1 : subIdx - 1);
-    }
-  }, {passive:true});
+  imageDots.forEach((dot,i)=>dot.addEventListener('click',()=>move(images,i)));
+  textDots.forEach((dot,i)=>dot.addEventListener('click',()=>move(stories,i)));
+  images.addEventListener('click',()=>move(images,1-indexOfSlide(images)));
+  hint.addEventListener('click',()=>move(stories,1-indexOfSlide(stories)));
+  images.addEventListener('scroll',sync,{passive:true});
+  stories.addEventListener('scroll',sync,{passive:true});
+  sync();
 })();
 </script>
 </body>
