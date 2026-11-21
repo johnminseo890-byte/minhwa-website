@@ -182,7 +182,7 @@ body{
 }
 
 .hero-img-carousel{
-  width:100%;overflow:hidden;border-radius:8px;
+  width:100%;aspect-ratio:1;container-type:inline-size;overflow:hidden;border-radius:8px;
 }
 .hero-img-track{
   display:flex;transition:transform 0.5s cubic-bezier(.25,.8,.25,1);
@@ -193,20 +193,44 @@ body{
   transition:filter 0.5s;
 }
 .product-details{
-  flex:0 0 100%;min-width:0;max-height:0;overflow:hidden;
+  flex:0 0 100%;min-width:0;aspect-ratio:1;overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;
   background:var(--hanji-cream);color:var(--mpingo);
 }
 .product-details-body{
-  padding:clamp(20px,4vw,36px);text-align:left;
-  font:400 0.9375rem/1.65 var(--font-body);overflow-wrap:anywhere;
+  padding:clamp(10px,4cqi,21px);text-align:left;overflow-wrap:break-word;
+  font:400 clamp(.75rem,2.5cqi,.8125rem)/1.32 var(--font-body);
 }
-.product-details h3{
-  margin:1em 0 .25em;
-  font:600 1.375rem/1.25 var(--font-display);
+.product-details h3{font:600 1.05em/1.25 var(--font-body);margin:0 0 .22em}
+.product-details .ingredients-heading{
+  font:600 clamp(1.35rem,5.6cqi,1.85rem)/1.08 var(--font-display);margin:0 0 .25em;
 }
-.product-details h3:first-child{margin-top:0}
-.product-details ol{padding-inline-start:1.6em}
-.product-stage.reading-details .product-details{max-height:none}
+.product-details .ingredients-list{
+  font-size:clamp(.8125rem,3.15cqi,1rem);line-height:1.36;
+}
+.product-directions{margin-top:clamp(8px,2.4cqi,14px);border-top:1px solid rgba(139,115,85,.32);padding-top:clamp(6px,1.65cqi,10px)}
+.product-directions p{margin-bottom:.55em}
+.product-details ol{padding-inline-start:1.45em}
+.product-details:focus-visible{outline:2px solid var(--baobab);outline-offset:-2px}
+@container (max-width:420px){
+  .product-details-body{padding:clamp(8px,2.5cqi,10px);font-size:clamp(.6875rem,3cqi,.75rem);line-height:1.25}
+  .product-details .ingredients-heading{font-size:clamp(1.1875rem,5.5cqi,1.35rem);margin-bottom:.16em}
+  .product-details .ingredients-list{font-size:clamp(.8125rem,3.55cqi,.875rem);line-height:1.25}
+  .product-directions{margin-top:.55em;padding-top:.45em}
+  .product-directions h3,.product-directions p{display:inline}
+  .product-directions h3{margin-right:.25em}
+  .product-directions .cautions{margin-top:.45em}
+  .product-directions ol,.product-directions li{display:inline;padding:0}
+  .product-directions ol{counter-reset:caution}
+  .product-directions li{counter-increment:caution}
+  .product-directions li::before{content:counter(caution) ". ";font-weight:600}
+  .product-directions ol ol{counter-reset:storage}
+  .product-directions ol ol li{counter-increment:storage}
+  .product-directions ol ol li::before{content:"(" counter(storage,lower-alpha) ") "}
+}
+@container (max-width:330px){
+  .product-details-body{padding:7px;line-height:1.22}
+  .product-details .ingredients-list{font-size:.8rem;line-height:1.23}
+}
 .product-stage.reading-details .hero-img-carousel{animation:none}
 .product-stage.reading-details .product-tooltip{visibility:hidden}
 .hero-img-track{align-items:flex-start}
@@ -863,23 +887,27 @@ body{
           <img src="images/minhwa-peony-carton.webp" alt="Minhwa sunscreen in its white carton" class="hero-product-img" width="1920" height="1920" fetchpriority="high">
           <img src="images/minhwa-peony-front.webp" alt="Minhwa sunscreen tube, front view with shade swatch" class="hero-product-img" width="1920" height="1920">
           <img src="images/minhwa-peony-back.webp" alt="Minhwa sunscreen tube, back view with shade swatch" class="hero-product-img" width="1920" height="1920">
-          <div class="product-details">
+          <div class="product-details" role="region" aria-label="Ingredients, usage and cautions" tabindex="-1">
             <div class="product-details-body">
-              <h3>Full Ingredients</h3>
-              <p>Water, Cyclopentasiloxane, Cetyl ethylhexanoate, Caprylic/capric triglycerides, Zinc Oxide (CI 77947), Dicaprylyl carbonate, Butylene Glycol, Glycerin, Sorbitan Olivate, Cetyl PEG/PPG-10/1 Dimethicone, Disteardimonium Hectorite, Iron Oxide Yellow (CI 77492), Iron Oxide Red (CI 77491), Iron Oxide Black (CI 77499), Sodium chloride, Allantoin, Panthenol, Tocopheryl acetate, Sodium Hyaluronate, 1,2-Hexanediol, Caprylyl Glycol, Ethylhexylglycerin, Adansonia Digitata Seed Oil (Baobab Oil)</p>
-              <h3>Usage</h3>
-              <p>As the last step of basic skincare, apply evenly to face, arms, legs, neck and other areas prone to UV exposure.</p>
-              <h3>Cautions</h3>
-              <ol>
-                <li>If redness, swelling or itching occurs during or after use due to sunlight exposure, consult a specialist.</li>
-                <li>Avoid use on wounded skin.</li>
-                <li>Storage &amp; handling
-                  <ol type="a">
-                    <li>Keep out of reach of children.</li>
-                    <li>Store away from direct sunlight.</li>
+              <h3 class="ingredients-heading">Full Ingredients</h3>
+              <p class="ingredients-list">Water, Cyclopentasiloxane, Cetyl ethylhexanoate, Caprylic/capric triglycerides, Zinc Oxide (CI 77947), Dicaprylyl carbonate, Butylene Glycol, Glycerin, Sorbitan Olivate, Cetyl PEG/PPG-10/1 Dimethicone, Disteardimonium Hectorite, Iron Oxide Yellow (CI 77492), Iron Oxide Red (CI 77491), Iron Oxide Black (CI 77499), Sodium chloride, Allantoin, Panthenol, Tocopheryl acetate, Sodium Hyaluronate, 1,2-Hexanediol, Caprylyl Glycol, Ethylhexylglycerin, Adansonia Digitata Seed Oil (Baobab Oil)</p>
+              <div class="product-directions">
+                <h3 class="usage-heading">Usage</h3>
+                <p class="usage-copy">As the last step of basic skincare, apply evenly to face, arms, legs, neck and other areas prone to UV exposure.</p>
+                <div class="cautions">
+                  <h3 class="cautions-heading">Cautions</h3>
+                  <ol>
+                    <li>If redness, swelling or itching occurs during or after use due to sunlight exposure, consult a specialist.</li>
+                    <li>Avoid use on wounded skin.</li>
+                    <li>Storage &amp; handling
+                      <ol type="a">
+                        <li>Keep out of reach of children.</li>
+                        <li>Store away from direct sunlight.</li>
+                      </ol>
+                    </li>
                   </ol>
-                </li>
-              </ol>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1282,11 +1310,14 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 (function(){
   const track=document.getElementById('heroImgTrack');
   const dots=document.querySelectorAll('#heroDots .carousel-dot');
+  const details=track.querySelector('.product-details');
   const total=dots.length;
   let idx=0;
   function goTo(i){
     idx=i;
-    stage.classList.toggle('reading-details', idx === total - 1);
+    const readingDetails=idx===total-1;
+    stage.classList.toggle('reading-details',readingDetails);
+    details.tabIndex=readingDetails?0:-1;
     track.style.transform='translateX(-'+idx*100+'%)';
     dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
   }
@@ -1295,10 +1326,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   track.style.cursor='pointer';
   track.addEventListener('click',()=>goTo(idx<total-1?idx+1:0));
   // Swipe
-  let sx=0;
-  track.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+  let sx=0,sy=0;
+  track.addEventListener('touchstart',e=>{
+    sx=e.touches[0].clientX;sy=e.touches[0].clientY;
+  },{passive:true});
   track.addEventListener('touchend',e=>{
     const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)<=Math.abs(e.changedTouches[0].clientY-sy))return;
     if(dx<-40&&idx<total-1)goTo(idx+1);
     if(dx>40&&idx>0)goTo(idx-1);
   });
