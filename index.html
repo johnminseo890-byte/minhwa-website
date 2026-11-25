@@ -618,17 +618,20 @@ body{
 
 .victory .section-title{color:var(--hanji-cream);margin-bottom:16px}
 .victory-carousel{position:relative;max-width:540px;margin:0 auto}
-.victory-choices{
-  display:flex;justify-content:center;flex-wrap:wrap;gap:0 8px;margin:0 auto 18px;
+.victory-controls{
+  display:flex;align-items:center;justify-content:center;gap:16px;margin-top:8px;
+  color:var(--dak);font:400 .875rem/1 var(--font-body);font-variant-numeric:tabular-nums;
 }
-.victory-choices button{
-  background:transparent;border:0;color:var(--dak);padding:0 8px;min-height:44px;
-  font:500 1rem/1.3 var(--font-display);cursor:pointer;
+.victory-controls button{
+  display:grid;place-items:center;width:44px;height:44px;border-radius:50%;
+  border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;
 }
-.victory-choices button[aria-current="true"]{
-  color:white;text-decoration:underline;text-decoration-color:var(--marula-gold);
-  text-underline-offset:6px;text-decoration-thickness:2px;
+.victory-controls button:disabled{opacity:.35;cursor:default}
+.victory-controls button::before{
+  content:"";width:9px;height:9px;border:solid currentColor;border-width:0 1.5px 1.5px 0;
+  transform:rotate(-45deg);
 }
+.victory-controls button:first-child::before{transform:rotate(135deg)}
 .victory-track{
   display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
   overscroll-behavior-x:contain;scrollbar-width:none;
@@ -644,7 +647,6 @@ body{
 .victory-slide figcaption a{color:inherit;display:inline-block;padding:8px}
 @media(max-width:480px){
   .victory{padding:48px 12px}
-  .victory-choices{gap:0 2px}
 }
 
 /* ======================== WHY US? INFOGRAPHIC ======================== */
@@ -838,7 +840,6 @@ body{
 .hero-dots button.active::before{background:var(--marula-gold)}
 .product-tooltip,.product-stage:hover .product-tooltip{position:static;transform:none;opacity:1;white-space:normal;width:100%;margin-top:8px}
 .story-sub-track{transform:none!important;transition:none}
-.victory-poster img{aspect-ratio:auto}
 
 </style>
 </head>
@@ -1090,14 +1091,7 @@ body{
 <section class="victory" id="victory" aria-labelledby="victoryTitle">
   <h2 class="section-title" id="victoryTitle">Your Victory</h2>
   <div class="victory-carousel">
-    <div class="victory-choices" id="victoryChoices" role="group" aria-label="Choose a customer">
-      <button type="button" aria-controls="victory-anesu" aria-current="true">Anesu</button>
-      <button type="button" aria-controls="victory-sandra" aria-current="false">Sandra</button>
-      <button type="button" aria-controls="victory-blair" aria-current="false">Blair</button>
-      <button type="button" aria-controls="victory-shumie" aria-current="false">Shumie</button>
-      <button type="button" aria-controls="victory-phildha" aria-current="false">Phildha</button>
-    </div>
-    <div class="victory-track" id="victoryTrack">
+    <div class="victory-track" id="victoryTrack" tabindex="0" role="region" aria-label="Customer photo gallery">
       <figure class="victory-slide" id="victory-anesu">
         <a class="victory-poster" href="images/victory-anesu-poster.webp" aria-label="Open Anesu&#39;s full-size photos">
           <img src="images/victory-anesu-poster.webp" alt="Anesu before and after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
@@ -1126,6 +1120,11 @@ body{
           <img src="images/victory-phildha-poster.webp" alt="Phildha before and after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
         </a>
       </figure>
+    </div>
+    <div class="victory-controls">
+      <button type="button" id="victoryPrev" aria-label="Previous photo" aria-controls="victoryTrack" disabled></button>
+      <span id="victoryCount" aria-live="polite" aria-atomic="true">1 / 5</span>
+      <button type="button" id="victoryNext" aria-label="Next photo" aria-controls="victoryTrack"></button>
     </div>
   </div>
 </section>
@@ -1361,31 +1360,35 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 /* ---- Victory Carousel ---- */
 (function(){
   const track = document.getElementById('victoryTrack');
-  const choices = [...document.querySelectorAll('#victoryChoices button')];
   const slides = [...track.children];
-  function select(index){
+  const previous = document.getElementById('victoryPrev');
+  const next = document.getElementById('victoryNext');
+  const count = document.getElementById('victoryCount');
+  const last = slides.length - 1;
+  let current = -1;
+
+  function sync(){
+    const index = Math.max(0, Math.min(last, Math.round(track.scrollLeft / track.clientWidth)));
+    if (index === current) return;
+    current = index;
+    previous.disabled = index === 0;
+    next.disabled = index === last;
+    count.textContent = (index + 1) + ' / ' + slides.length;
+    slides.forEach((slide, i) => { slide.inert = i !== index; });
+  }
+  function move(index){
     track.scrollTo({
-      left:index * track.clientWidth,
+      left:Math.max(0, Math.min(last, index)) * track.clientWidth,
       behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
     });
   }
-  function sync(){
-    const current = Math.round(track.scrollLeft / track.clientWidth);
-    choices.forEach((button, i) => {
-      button.setAttribute('aria-current', String(i === current));
-      slides[i].inert = i !== current;
-    });
-  }
-  choices.forEach((button, i) => {
-    button.addEventListener('click', () => select(i));
-    button.addEventListener('keydown', event => {
-      const index = {ArrowLeft:Math.max(0, i - 1), ArrowRight:Math.min(i + 1, slides.length - 1),
-        Home:0, End:slides.length - 1}[event.key];
-      if (index === undefined) return;
-      event.preventDefault();
-      choices[index].focus();
-      select(index);
-    });
+  previous.addEventListener('click', () => move(current - 1));
+  next.addEventListener('click', () => move(current + 1));
+  track.parentElement.addEventListener('keydown', event => {
+    const target = {ArrowLeft:current - 1, ArrowRight:current + 1, Home:0, End:last}[event.key];
+    if (target === undefined) return;
+    event.preventDefault();
+    move(target);
   });
   track.addEventListener('scroll', sync, {passive:true});
   sync();
