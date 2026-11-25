@@ -641,10 +641,7 @@ body{
 .victory-poster,.victory-poster img{display:block;width:100%;border-radius:8px}
 .victory-poster img{height:auto;aspect-ratio:1}
 .victory-poster:focus-visible{outline-offset:-4px;outline:3px solid var(--marula-gold)}
-.victory-slide figcaption{
-  margin-top:8px;color:var(--dak);font:400 .875rem/1.5 var(--font-body);
-}
-.victory-slide figcaption a{color:inherit;display:inline-block;padding:8px}
+
 @media(max-width:480px){
   .victory{padding:48px 12px}
 }
@@ -841,6 +838,22 @@ body{
 .product-tooltip,.product-stage:hover .product-tooltip{position:static;transform:none;opacity:1;white-space:normal;width:100%;margin-top:8px}
 .story-sub-track{transform:none!important;transition:none}
 
+
+.victory-track{padding-top:8px}
+.victory-poster{border:0;padding:0;background:transparent;cursor:pointer}
+.victory-slide video{display:block;width:100%;aspect-ratio:1;object-fit:contain;background:#17120f;border-radius:8px}
+.hero-product-img{cursor:pointer}
+@media(prefers-reduced-motion:no-preference){
+  .victory-slide:not([inert]) .victory-poster,.journey-card-img{
+    animation:subtleFloat 6s ease-in-out 1.5s infinite;
+  }
+  .story-img-card{
+    animation:shimmerRotate 4s linear infinite,subtleFloat 6s ease-in-out 1.5s infinite;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-img-carousel,.product-stage,.story-img-card{animation:none}
+}
 </style>
 </head>
 <body>
@@ -1091,40 +1104,40 @@ body{
 <section class="victory" id="victory" aria-labelledby="victoryTitle">
   <h2 class="section-title" id="victoryTitle">Your Victory</h2>
   <div class="victory-carousel">
-    <div class="victory-track" id="victoryTrack" tabindex="0" role="region" aria-label="Customer photo gallery">
+    <div class="victory-track" id="victoryTrack" tabindex="0" role="region" aria-label="Customer photos and video">
       <figure class="victory-slide" id="victory-anesu">
-        <a class="victory-poster" href="images/victory-anesu-poster.webp" aria-label="Open Anesu&#39;s full-size photos">
+        <button type="button" class="victory-poster" aria-label="Show next slide">
           <img src="images/victory-anesu-poster.webp" alt="Anesu before and after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
-        </a>
-        <figcaption><a href="images/victory-anesu.mp4">Watch Anesu&#39;s video</a></figcaption>
+        </button>
+      </figure>
+      <figure class="victory-slide" id="victory-anesu-video">
+        <video controls muted playsinline preload="metadata" aria-label="Anesu's video review" src="images/victory-anesu.mp4"></video>
       </figure>
       <figure class="victory-slide" id="victory-sandra">
-        <a class="victory-poster" href="images/victory-sandra-poster.webp" aria-label="Open Sandra&#39;s full-size photos">
+        <button type="button" class="victory-poster" aria-label="Show next slide">
           <img src="images/victory-sandra-poster.webp" alt="Sandra before and immediately after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
-        </a>
-        <figcaption>Sandra is a pseudonym.</figcaption>
+        </button>
       </figure>
       <figure class="victory-slide" id="victory-blair">
-        <a class="victory-poster" href="images/victory-blair-poster.webp" aria-label="Open Blair&#39;s full-size photos">
+        <button type="button" class="victory-poster" aria-label="Show next slide">
           <img src="images/victory-blair-poster.webp" alt="Blair before and immediately after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
-        </a>
-        <figcaption>Blair is a pseudonym.</figcaption>
+        </button>
       </figure>
       <figure class="victory-slide" id="victory-shumie">
-        <a class="victory-poster" href="images/victory-shumie-poster.webp" aria-label="Open Shumie&#39;s full-size photos">
+        <button type="button" class="victory-poster" aria-label="Show next slide">
           <img src="images/victory-shumie-poster.webp" alt="Shumie outdoors and holding her Minhwa sunscreen." width="1080" height="1080" loading="lazy">
-        </a>
+        </button>
       </figure>
       <figure class="victory-slide" id="victory-phildha">
-        <a class="victory-poster" href="images/victory-phildha-poster.webp" aria-label="Open Phildha&#39;s full-size photos">
+        <button type="button" class="victory-poster" aria-label="Show next slide">
           <img src="images/victory-phildha-poster.webp" alt="Phildha before and after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
-        </a>
+        </button>
       </figure>
     </div>
     <div class="victory-controls">
-      <button type="button" id="victoryPrev" aria-label="Previous photo" aria-controls="victoryTrack" disabled></button>
-      <span id="victoryCount" aria-live="polite" aria-atomic="true">1 / 5</span>
-      <button type="button" id="victoryNext" aria-label="Next photo" aria-controls="victoryTrack"></button>
+      <button type="button" id="victoryPrev" aria-label="Previous slide" aria-controls="victoryTrack" disabled></button>
+      <span id="victoryCount" aria-live="polite" aria-atomic="true">1 / 6</span>
+      <button type="button" id="victoryNext" aria-label="Next slide" aria-controls="victoryTrack"></button>
     </div>
   </div>
 </section>
@@ -1350,6 +1363,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
       behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
     });
   }
+  track.addEventListener('click', event => {
+    if (event.target.matches('.hero-product-img')) goTo((currentSlide() + 1) % dots.length);
+  });
   dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
   track.addEventListener('scroll', sync, {passive:true});
 
@@ -1364,6 +1380,15 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   const previous = document.getElementById('victoryPrev');
   const next = document.getElementById('victoryNext');
   const count = document.getElementById('victoryCount');
+  const video = track.querySelector('video');
+  const videoObserver = new IntersectionObserver(([entry]) => {
+    if (entry.intersectionRatio >= 0.8 && !document.hidden && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  }, {threshold:[0, 0.8]});
+  videoObserver.observe(video);
   const last = slides.length - 1;
   let current = -1;
 
@@ -1382,9 +1407,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
       behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
     });
   }
+  track.addEventListener('click', event => {
+    if (event.target.closest('.victory-poster')) move((current + 1) % slides.length);
+  });
   previous.addEventListener('click', () => move(current - 1));
   next.addEventListener('click', () => move(current + 1));
   track.parentElement.addEventListener('keydown', event => {
+    if (event.target === video) return;
     const target = {ArrowLeft:current - 1, ArrowRight:current + 1, Home:0, End:last}[event.key];
     if (target === undefined) return;
     event.preventDefault();
@@ -1489,6 +1518,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     label.textContent = panel ? 'WHY MINHWA' : sub ? 'ABOUT FOUNDER' : 'OUR STORY';
     hint.textContent = sub ? '← Back to brand story' : 'Swipe or tap to read the founder’s story →';
   }
+  images.addEventListener('click', event => {
+    if (event.target.matches('img')) move(images, (indexOfSlide(images) + 1) % imageDots.length);
+  });
   imageDots.forEach((dot,i)=>dot.addEventListener('click',()=>move(images,i)));
   textDots.forEach((dot,i)=>dot.addEventListener('click',()=>move(stories,i)));
 
