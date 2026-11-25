@@ -854,6 +854,12 @@ body{
 @media(prefers-reduced-motion:reduce){
   .hero-img-carousel,.product-stage,.story-img-card{animation:none}
 }
+
+#reviewZoom{position:fixed;inset:0;margin:auto;width:min(1080px,96vw);max-width:96vw;max-height:94dvh;border:0;border-radius:12px;padding:48px 8px 8px;background:#faf7ef;overflow:auto}
+#reviewZoom::backdrop{background:rgba(0,0,0,.8)}
+#reviewZoom img{display:block;width:100%;height:auto}
+#reviewZoom button{position:sticky;top:0;display:block;margin:-40px 0 4px auto;min-width:44px;height:40px;border:0;border-radius:6px;background:#faf7ef;color:#2e1e12;font-size:26px;cursor:pointer}
+body:has(#reviewZoom[open]){overflow:hidden}
 </style>
 </head>
 <body>
@@ -1106,7 +1112,7 @@ body{
   <div class="victory-carousel">
     <div class="victory-track" id="victoryTrack" tabindex="0" role="region" aria-label="Customer photos and video">
       <figure class="victory-slide" id="victory-anesu">
-        <button type="button" class="victory-poster" aria-label="Show next slide">
+        <button type="button" class="victory-poster" aria-label="Enlarge customer photos">
           <img src="images/victory-anesu-poster.webp" alt="Anesu before and after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
         </button>
       </figure>
@@ -1114,22 +1120,22 @@ body{
         <video controls muted playsinline preload="metadata" aria-label="Anesu's video review" src="images/victory-anesu.mp4"></video>
       </figure>
       <figure class="victory-slide" id="victory-sandra">
-        <button type="button" class="victory-poster" aria-label="Show next slide">
+        <button type="button" class="victory-poster" aria-label="Enlarge customer photos">
           <img src="images/victory-sandra-poster.webp" alt="Sandra before and immediately after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
         </button>
       </figure>
       <figure class="victory-slide" id="victory-blair">
-        <button type="button" class="victory-poster" aria-label="Show next slide">
+        <button type="button" class="victory-poster" aria-label="Enlarge customer photos">
           <img src="images/victory-blair-poster.webp" alt="Blair before and immediately after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
         </button>
       </figure>
       <figure class="victory-slide" id="victory-shumie">
-        <button type="button" class="victory-poster" aria-label="Show next slide">
+        <button type="button" class="victory-poster" aria-label="Enlarge customer photos">
           <img src="images/victory-shumie-poster.webp" alt="Shumie outdoors and holding her Minhwa sunscreen." width="1080" height="1080" loading="lazy">
         </button>
       </figure>
       <figure class="victory-slide" id="victory-phildha">
-        <button type="button" class="victory-poster" aria-label="Show next slide">
+        <button type="button" class="victory-poster" aria-label="Enlarge customer photos">
           <img src="images/victory-phildha-poster.webp" alt="Phildha before and after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
         </button>
       </figure>
@@ -1408,7 +1414,14 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     });
   }
   track.addEventListener('click', event => {
-    if (event.target.closest('.victory-poster')) move((current + 1) % slides.length);
+    const poster = event.target.closest('.victory-poster');
+    if (!poster) return;
+    const source = poster.querySelector('img');
+    const dialog = document.getElementById('reviewZoom');
+    const enlarged = dialog.querySelector('img');
+    enlarged.src = source.currentSrc || source.src;
+    enlarged.alt = source.alt;
+    dialog.showModal();
   });
   previous.addEventListener('click', () => move(current - 1));
   next.addEventListener('click', () => move(current + 1));
@@ -1528,6 +1541,22 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   images.addEventListener('scroll',sync,{passive:true});
   stories.addEventListener('scroll',sync,{passive:true});
   sync();
+})();
+</script>
+<dialog id="reviewZoom" aria-label="Enlarged customer photos">
+  <button type="button" aria-label="Close enlarged photos" autofocus>&times;</button>
+  <img alt="">
+</dialog>
+<script>
+(function(){
+  const dialog = document.getElementById('reviewZoom');
+  dialog.querySelector('button').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', event => {
+    if (event.target !== dialog) return;
+    const rect = dialog.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right ||
+        event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+  });
 })();
 </script>
 </body>
