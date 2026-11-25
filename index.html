@@ -615,71 +615,36 @@ body{
   background:linear-gradient(135deg, rgba(196,162,78,0.04) 0%, transparent 50%, rgba(196,162,78,0.04) 100%);
   pointer-events:none;
 }
-.victory .section-label{color:var(--marula-gold)}
-.victory .section-title{color:var(--hanji-cream);margin-bottom:48px}
-.victory-carousel{
-  position:relative;max-width:400px;margin:0 auto;
-  overflow:hidden;z-index:1;
+
+.victory .section-title{color:var(--hanji-cream);margin-bottom:16px}
+.victory-carousel{position:relative;max-width:540px;margin:0 auto}
+.victory-choices{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:0 8px;margin:0 auto 18px;
+}
+.victory-choices button{
+  background:transparent;border:0;color:var(--dak);padding:0 8px;min-height:44px;
+  font:500 1rem/1.3 var(--font-display);cursor:pointer;
+}
+.victory-choices button[aria-current="true"]{
+  color:white;text-decoration:underline;text-decoration-color:var(--marula-gold);
+  text-underline-offset:6px;text-decoration-thickness:2px;
 }
 .victory-track{
-  display:flex;transition:transform 0.5s cubic-bezier(.25,.8,.25,1);
+  display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+  overscroll-behavior-x:contain;scrollbar-width:none;
 }
-.victory-slide{
-  min-width:100%;padding:0 12px;box-sizing:border-box;
+.victory-track::-webkit-scrollbar{display:none}
+.victory-slide{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always}
+.victory-poster,.victory-poster img{display:block;width:100%;border-radius:8px}
+.victory-poster img{height:auto;aspect-ratio:1}
+.victory-poster:focus-visible{outline-offset:-4px;outline:3px solid var(--marula-gold)}
+.victory-slide figcaption{
+  margin-top:8px;color:var(--dak);font:400 .875rem/1.5 var(--font-body);
 }
-.victory-card{
-  width:100%;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(196,162,78,0.12);
-  border-radius:20px;
-  padding:32px 24px;
-  transition:all 0.4s;
-}
-.victory-card:hover{
-  background:rgba(196,162,78,0.06);
-  border-color:rgba(196,162,78,0.25);
-  transform:translateY(-4px);
-}
-.victory-video{
-  width:100%;aspect-ratio:9/16;
-  background:rgba(255,255,255,0.06);
-  border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:16px;
-  position:relative;overflow:hidden;
-  border:1px solid rgba(196,162,78,0.08);
-}
-.victory-play{
-  width:56px;height:56px;border-radius:50%;
-  background:rgba(196,162,78,0.3);
-  display:flex;align-items:center;justify-content:center;
-  transition:all 0.3s;
-}
-.victory-card:hover .victory-play{
-  background:var(--marula-gold);transform:scale(1.1);
-}
-.victory-name{
-  font-family:var(--font-display);font-size:16px;
-  font-weight:500;color:var(--dak);margin-bottom:4px;
-}
-.victory-role{font-size:12px;color:rgba(242,237,228,0.5);letter-spacing:0.06em}
-
-.carousel-dots{
-  display:flex;gap:10px;justify-content:center;margin-top:24px;
-  position:relative;z-index:1;
-}
-.carousel-dot{
-  width:10px;height:10px;border-radius:50%;
-  background:rgba(196,162,78,0.2);border:none;cursor:pointer;
-  transition:all 0.3s;padding:0;
-}
-.carousel-dot.active{background:var(--marula-gold);transform:scale(1.2)}
-.victory-coming{
-  margin-top:32px;
-  font-family:var(--font-display);
-  font-size:14px;color:rgba(196,162,78,0.6);
-  letter-spacing:0.1em;
-  position:relative;z-index:1;
+.victory-slide figcaption a{color:inherit;display:inline-block;padding:8px}
+@media(max-width:480px){
+  .victory{padding:48px 12px}
+  .victory-choices{gap:0 2px}
 }
 
 /* ======================== WHY US? INFOGRAPHIC ======================== */
@@ -881,6 +846,7 @@ body{
   <ul class="nav-links">
     <li><a href="#hero">Home</a></li>
     <li><a href="#about">Our Story</a></li>
+    <li><a href="#victory">Your Victory</a></li>
   </ul>
   <button class="hamburger" onclick="document.querySelector('.mobile-menu').classList.add('active')" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -892,6 +858,7 @@ body{
   <button class="mobile-close" onclick="this.parentElement.classList.remove('active')">✕</button>
   <a href="#hero" onclick="this.parentElement.classList.remove('active')">Home</a>
   <a href="#about" onclick="this.parentElement.classList.remove('active')">Our Story</a>
+  <a href="#victory" onclick="this.parentElement.classList.remove('active')">Your Victory</a>
 </div>
 
 <!-- ==================== HERO ==================== -->
@@ -1109,39 +1076,47 @@ body{
 
 
 <!-- ==================== OUR VICTORY (TESTIMONIALS) ==================== -->
-<section class="victory" id="victory">
-  <h2 class="section-title fade-in">Your Victory</h2>
-  <div class="victory-carousel fade-in" id="victoryCarousel">
-    <div class="victory-track" id="victoryTrack">
-      <div class="victory-slide">
-        <div class="victory-card">
-          <div class="victory-video"><div class="victory-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--hanji-cream)"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-          <h4 class="victory-name">Thandiwe M.</h4>
-          <p class="victory-role">Cape Town, SA</p>
-        </div>
-      </div>
-      <div class="victory-slide">
-        <div class="victory-card">
-          <div class="victory-video"><div class="victory-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--hanji-cream)"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-          <h4 class="victory-name">Naledi K.</h4>
-          <p class="victory-role">Johannesburg, SA</p>
-        </div>
-      </div>
-      <div class="victory-slide">
-        <div class="victory-card">
-          <div class="victory-video"><div class="victory-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--hanji-cream)"><polygon points="6,3 20,12 6,21"/></svg></div></div>
-          <h4 class="victory-name">Amahle D.</h4>
-          <p class="victory-role">Durban, SA</p>
-        </div>
-      </div>
+<section class="victory" id="victory" aria-labelledby="victoryTitle">
+  <h2 class="section-title" id="victoryTitle">Your Victory</h2>
+  <div class="victory-carousel">
+    <div class="victory-choices" id="victoryChoices" role="group" aria-label="Choose a customer">
+      <button type="button" aria-controls="victory-anesu" aria-current="true">Anesu</button>
+      <button type="button" aria-controls="victory-sandra" aria-current="false">Sandra</button>
+      <button type="button" aria-controls="victory-blair" aria-current="false">Blair</button>
+      <button type="button" aria-controls="victory-shumie" aria-current="false">Shumie</button>
+      <button type="button" aria-controls="victory-phildha" aria-current="false">Phildha</button>
     </div>
-    <div class="carousel-dots" id="victoryDots">
-      <button class="carousel-dot active" data-idx="0"></button>
-      <button class="carousel-dot" data-idx="1"></button>
-      <button class="carousel-dot" data-idx="2"></button>
+    <div class="victory-track" id="victoryTrack">
+      <figure class="victory-slide" id="victory-anesu">
+        <a class="victory-poster" href="images/victory-anesu-poster.webp" aria-label="Open Anesu&#39;s full-size photos">
+          <img src="images/victory-anesu-poster.webp" alt="Anesu before and after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
+        </a>
+        <figcaption><a href="images/victory-anesu.mp4">Watch Anesu&#39;s video</a></figcaption>
+      </figure>
+      <figure class="victory-slide" id="victory-sandra">
+        <a class="victory-poster" href="images/victory-sandra-poster.webp" aria-label="Open Sandra&#39;s full-size photos">
+          <img src="images/victory-sandra-poster.webp" alt="Sandra before and immediately after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
+        </a>
+        <figcaption>Sandra is a pseudonym.</figcaption>
+      </figure>
+      <figure class="victory-slide" id="victory-blair">
+        <a class="victory-poster" href="images/victory-blair-poster.webp" aria-label="Open Blair&#39;s full-size photos">
+          <img src="images/victory-blair-poster.webp" alt="Blair before and immediately after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
+        </a>
+        <figcaption>Blair is a pseudonym.</figcaption>
+      </figure>
+      <figure class="victory-slide" id="victory-shumie">
+        <a class="victory-poster" href="images/victory-shumie-poster.webp" aria-label="Open Shumie&#39;s full-size photos">
+          <img src="images/victory-shumie-poster.webp" alt="Shumie outdoors and holding her Minhwa sunscreen." width="1080" height="1080" loading="lazy">
+        </a>
+      </figure>
+      <figure class="victory-slide" id="victory-phildha">
+        <a class="victory-poster" href="images/victory-phildha-poster.webp" aria-label="Open Phildha&#39;s full-size photos">
+          <img src="images/victory-phildha-poster.webp" alt="Phildha before and after applying Minhwa sunscreen." width="1080" height="1080" loading="lazy">
+        </a>
+      </figure>
     </div>
   </div>
-  <p class="victory-coming fade-in">Video testimonials coming soon</p>
 </section>
 
 <!-- ==================== WHY MINHWA ==================== -->
@@ -1373,25 +1348,38 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   sync();
 })();
 
+
 /* ---- Victory Carousel ---- */
 (function(){
-  const track=document.getElementById('victoryTrack');
-  const dots=document.querySelectorAll('#victoryDots .carousel-dot');
-  if(!track)return;
-  let idx=0;const total=3;
-  function goTo(i){
-    idx=i;
-    track.style.transform='translateX(-'+idx*100+'%)';
-    dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
+  const track = document.getElementById('victoryTrack');
+  const choices = [...document.querySelectorAll('#victoryChoices button')];
+  const slides = [...track.children];
+  function select(index){
+    track.scrollTo({
+      left:index * track.clientWidth,
+      behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
+    });
   }
-  dots.forEach(d=>d.addEventListener('click',()=>goTo(+d.dataset.idx)));
-  let sx=0;
-  track.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
-  track.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-sx;
-    if(dx<-40&&idx<total-1)goTo(idx+1);
-    if(dx>40&&idx>0)goTo(idx-1);
+  function sync(){
+    const current = Math.round(track.scrollLeft / track.clientWidth);
+    choices.forEach((button, i) => {
+      button.setAttribute('aria-current', String(i === current));
+      slides[i].inert = i !== current;
+    });
+  }
+  choices.forEach((button, i) => {
+    button.addEventListener('click', () => select(i));
+    button.addEventListener('keydown', event => {
+      const index = {ArrowLeft:Math.max(0, i - 1), ArrowRight:Math.min(i + 1, slides.length - 1),
+        Home:0, End:slides.length - 1}[event.key];
+      if (index === undefined) return;
+      event.preventDefault();
+      choices[index].focus();
+      select(index);
+    });
   });
+  track.addEventListener('scroll', sync, {passive:true});
+  sync();
 })();
 
 /* ---- Journey Infographic ---- */
